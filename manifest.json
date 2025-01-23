@@ -6,10 +6,10 @@
     "files": ["src/*.axs", "src/*.tko", "lib/*.axi", "SymLink.ps1", "LICENSE", "README.md"],
     "repository": {
         "type": "git",
-        "url": "https://github.com/Norgate-AV-Solutions-Ltd/NAVDatabase.Amx.ExtronSW4USB.git"
+        "url": "https://github.com/Norgate-AV/NAVDatabase.Amx.ExtronSW4USB.git"
     },
     "bugs": {
-        "url": "https://github.com/Norgate-AV-Solutions-Ltd/NAVDatabase.Amx.ExtronSW4USB/issues"
+        "url": "https://github.com/Norgate-AV/NAVDatabase.Amx.ExtronSW4USB/issues"
     },
     "dependencies": [
         {
