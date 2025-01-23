@@ -116,7 +116,7 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
 define_function SendStringRaw(char cParam[]) {
-     NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, dvPort, cParam))
+     NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, dvPort, cParam))
     send_string dvPort,"cParam"
     wait(1) iCommandBusy = false
 }
@@ -137,7 +137,7 @@ define_function Drive() {
             if (iPendingRequired[i][x] && !iCommandBusy) {
                 iPendingRequired[i][x] = false
                 iPending = false
-                if (iOutputRequired[i][x] <> (iOutputActual[2][x] || iOutputActual[3][x])) {
+                if (iOutputRequired[i][x] != (iOutputActual[2][x] || iOutputActual[3][x])) {
                 iCommandBusy = true
                 BuildString(iOutputRequired[i][x],i)
                 }else {
@@ -150,7 +150,7 @@ define_function Drive() {
             if (iPendingRequired[i][x] && !iCommandBusy) {
                 iPendingRequired[i][x] = false
                 iPending = false
-                if (iOutputRequired[i][x] <> iOutputActual[i][x]) {
+                if (iOutputRequired[i][x] != iOutputActual[i][x]) {
                 iCommandBusy = true
                 BuildString(iOutputRequired[i][x],i)
                 }else {
@@ -178,7 +178,7 @@ define_function Process() {
     while (length_array(cRxBuffer) && NAVContains(cRxBuffer,"NAV_LF")) {
     cTemp = remove_string(cRxBuffer,"NAV_LF",1)
     if (length_array(cTemp)) {
-        NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_PARSING_STRING_FROM, dvPort, cTemp))
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_PARSING_STRING_FROM, dvPort, cTemp))
         cTemp = NAVStripCharsFromRight(cTemp, 2)     //Remove CRLF
         select {
         /*
@@ -291,7 +291,7 @@ data_event[dvPort] {
         send_command data.device,"'HSOFF'"
         //SendStringRaw("NAV_ESC,'3CV',NAV_CR")    //Set Verbose Mode to verbose and tagged
         Init()
-        timeline_create(TL_DRIVE,ltDrive,length_array(ltDrive),timeline_absolute,timeline_repeat)
+        NAVTimelineStart(TL_DRIVE,ltDrive,timeline_absolute,timeline_repeat)
     }
     }
     string: {
@@ -299,7 +299,7 @@ data_event[dvPort] {
         iCommunicating = true
         [vdvObject,DATA_INITIALIZED] = true
         TimeOut()
-         NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM, dvPort, data.text))
+         NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_FROM, dvPort, data.text))
         if (!iSemaphore) { Process() }
     }
     }
@@ -310,7 +310,7 @@ data_event[vdvObject] {
     stack_var char cCmdHeader[NAV_MAX_CHARS]
     stack_var char cCmdParam[3][NAV_MAX_CHARS]
     if (iModuleEnabled) {
-        NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
         cCmdHeader = DuetParseCmdHeader(data.text)
         cCmdParam[1] = DuetParseCmdParam(data.text)
         cCmdParam[2] = DuetParseCmdParam(data.text)
@@ -320,7 +320,7 @@ data_event[vdvObject] {
             switch (cCmdParam[1]) {
             case 'IP_ADDRESS': {
                 //cIPAddress = cCmdParam[2]
-                //timeline_create(TL_IP_CHECK,ltIPCheck,length_array(ltIPCheck),timeline_absolute,timeline_repeat)
+                //NAVTimelineStart(TL_IP_CHECK,ltIPCheck,timeline_absolute,timeline_repeat)
             }
             case 'ID': {
                 //cID = format('%02d',atoi(cCmdParam[2]))
